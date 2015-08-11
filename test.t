@@ -35,12 +35,20 @@ my @files = (
     {
         file   => './music/Gary-Moore_-_Parisian-Walkways.mp3',
         artist => 'Гарри Мур',
-        title  => 'Парижские тротуары'
+        title  => 'Парижские тротуары',
+        code   => 'cp1251'
     },
     {
         file   => './music/OTT_-_The-Queen-of-All-Everything.mp3',
         artist => 'OTT',
-        title  => '02_Ott - The Queen of All Everything'
+        title  => '02_Ott - The Queen of All Everything',
+        code   => 'latin'
+    },
+    {
+        file   => './music/combinatia.mp3',
+        artist => 'a',
+        title  => 't',
+        code   => 'utf8'
     }
 );
 
@@ -52,8 +60,8 @@ sub liquidsoap {
 }
 
 foreach my $it (@files) {
-    my ( $filename, $expect_artist, $expect_title ) =
-      ( $it->{file}, $it->{artist}, $it->{title} );
+    my ( $filename, $expect_artist, $expect_title, $coding ) =
+      ( $it->{file}, $it->{artist}, $it->{title}, $it->{code} );
 
     liquidsoap( "r.push " . $filename );
 
@@ -71,9 +79,11 @@ foreach my $it (@files) {
             $title = $1;
         }
     }
+
     my $expected_tag = $expect_artist . ' ' . $expect_title;
     my $tag          = $artist . ' ' . $title;
-    is( $tag, $expected_tag, qq{Tags shouldbe valid for file "$filename"} );
+
+    is( $tag, $expected_tag, qq{"meta encoded "${coding}" in "$filename"} );
 
     # clear queue
     liquidsoap('/dev/null.skip');

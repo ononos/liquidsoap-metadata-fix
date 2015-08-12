@@ -36,4 +36,4 @@ stream = map_metadata(fix_meta, stream)
 ```
 
 [travis-url]: https://travis-ci.org/ononos/liquidsoap-metadata-fix
-[travis-image]: http://img.shields.io/travis/ononos/liquidsoap-metadata-fix
+[travis-image]: https://travis-ci.org/ononos/liquidsoap-metadata-fix.svg

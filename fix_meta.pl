@@ -31,8 +31,8 @@ s = map_metadata(fix_meta, s)
 ';
 }
 
-sub is_sane_utf8($;$)
-{
+# from Test::utf8
+sub is_sane_utf8 {
   my $string = shift;
 
   my $re_bit = join "|", map { Encode::encode("utf8",chr($_)) } (127..255);
@@ -118,6 +118,8 @@ sub tag_from_filename {
 
     return ( $f_artist, $f_title );
 }
+
+### main ###
 
 my $arg = $ARGV[0];
 chomp($arg);

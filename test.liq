@@ -25,6 +25,7 @@ end
 
 s = request.queue(id="r")
 s = mksafe(s)
+s = audio_to_stereo(s)          # ensure stream is stereo
 s = map_metadata(fix_meta, s)
 s = on_metadata(show_meta, s)
 

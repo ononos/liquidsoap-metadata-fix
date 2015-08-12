@@ -49,6 +49,12 @@ my @files = (
         artist => 'Комбинация',
         title  => 'Два кусочека колбаски',
         code   => 'utf8'
+    },
+    {
+        file => './music/no-meta_-_some-title.mp3',
+        artist => 'no meta',
+        title => 'some title',
+        code => 'no metadata, just filename'
     }
 );
 
@@ -80,8 +86,8 @@ foreach my $it (@files) {
         }
     }
 
-    my $expected_tag = $expect_artist . ' ' . $expect_title;
-    my $tag          = $artist . ' ' . $title;
+    my $expected_tag = $expect_artist . ' - ' . $expect_title;
+    my $tag          = $artist . ' - ' . $title;
 
     is( $tag, $expected_tag, qq{"meta encoded "${coding}" in "$filename"} );
 

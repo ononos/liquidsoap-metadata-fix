@@ -46,8 +46,8 @@ my @files = (
     },
     {
         file   => './music/combinatia.mp3',
-        artist => 'a',
-        title  => 't',
+        artist => 'Комбинация',
+        title  => 'Два кусочека колбаски',
         code   => 'utf8'
     }
 );

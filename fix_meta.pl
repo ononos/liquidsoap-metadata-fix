@@ -63,28 +63,10 @@ sub is_sane_utf8($;$)
 # If no artist and no title than try return title from filename.
 #
 sub tag_encode {
-    my ($filename, $a, $t) = @_;
-    if ($a =~m/^\s*$/ &&
-	$t =~m/^\s*$/) {
+    my ($a, $t) = @_;
 
-	$filename=~s|^(.*/)?(.*)|$2|s; # strip path
-	$filename=~s|\.\w{1,4}$||; # strip file ext
-
-	$filename = 'Unknown' if ($filename =~/^\s*$/);
-
-        my ($f_artist, $f_title);
-
-	if ($filename =~m/(.*?) [—-] (.*)/) {
-	    ($f_artist, $f_title) = ($1, $2);
-	} elsif (($f_artist, $f_title) = $filename =~m/(.*?)\s*-\s*(.*)/) {
-	    ($f_artist, $f_title) = ($1, $2);
-	} else {
-            ($f_artist, $f_title) = ('', $filename);
-        }
-        return ($f_artist, $f_title);
-    }
-
-    $t = 'Unknown' if ($t =~/^\s*$/);
+    $a = 'Unknown' if ( $a =~ /^\s*$/ );
+    $t = '[No title]' if ( $t =~ /^\s*$/ );
 
     # first try detect as JP or utf8
     my $decoder = guess_encoding("$a $t", qw/euc-jp shiftjis/);
@@ -98,18 +80,65 @@ sub tag_encode {
     return ($a, $t);
 }
 
+sub trim {
+    my $str = shift;
+    $str =~ s/^\s+//;
+    $str =~ s/\s+$//;
+    return $str;
+}
+
+# return (artist, title) from filename
+sub tag_from_filename {
+    my $filename = shift;
+
+    $filename =~ s|^(.*/)?(.*)|$2|s;    # strip path
+    $filename =~ s|\.\w{1,4}$||;        # strip file ext
+
+    $filename = 'Unknown' if ( $filename =~ /^\s*$/ );
+
+    my ( $f_artist, $f_title );
+
+    if ( $filename =~ m/(.*?)_-_(.*)/ ) {
+        ( $f_artist, $f_title ) = ( $1, $2 );
+    }
+    elsif ( $filename =~ m/(.*?) [—-] (.*)/ ) {
+        ( $f_artist, $f_title ) = ( $1, $2 );
+    }
+    elsif ( ( $f_artist, $f_title ) = $filename =~ m/(.*?)\s*-\s*(.*)/ ) {
+        ( $f_artist, $f_title ) = ( $1, $2 );
+    }
+    else {
+        ( $f_artist, $f_title ) = ( '', $filename );
+    }
+
+    $f_artist =~ s|[-_]| |g;    # replace "-" "_" as " "
+    $f_title =~ s|[-_]| |g;
+    $f_artist =~ s|\s+| |g;     # only one space
+    $f_title =~ s|\s+| |g;
+
+    return ( $f_artist, $f_title );
+}
+
 my $arg = $ARGV[0];
 chomp($arg);
 
 my ($filename, $artist, $title) = split('::', $arg);
 
-# liquidsoap give meta in utf8. need latin1
 unless (is_sane_utf8(qq{$artist $title})) {
     Encode::from_to ($artist, "UTF-8", "iso-8859-1");
     Encode::from_to ($title, "UTF-8", "iso-8859-1");
 }
-#Encode::from_to ($arg, "UTF-8", "iso-8859-1");
 
-($artist, $title) = tag_encode $filename, $artist, $title;
+if (   $artist =~ m/^\s*$/
+    && $title =~ m/^\s*$/ )
+{
+    ( $artist, $title ) = tag_from_filename $filename;
+}
+else {
+    ( $artist, $title ) = tag_encode $artist, $title;
+}
+
+$artist = trim $artist;
+$title = trim $title;
 
 print  $artist . '::' . $title . "\n";

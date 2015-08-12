@@ -69,11 +69,13 @@ foreach my $it (@files) {
     my ( $filename, $expect_artist, $expect_title, $coding ) =
       ( $it->{file}, $it->{artist}, $it->{title}, $it->{code} );
 
-    liquidsoap( "r.push " . $filename );
+    my ($rid) = liquidsoap( "r.push " . $filename );
+
+    ok( $rid =~m/\d+/, 'Push to liquidsoap should return number');
 
     sleep 1;
 
-    my ( $output, $end ) = liquidsoap('/dev/null.metadata');
+    my ( $output ) = liquidsoap('/dev/null.metadata');
 
     my ( $artist, $title );
 

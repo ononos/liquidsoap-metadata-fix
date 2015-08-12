@@ -5,5 +5,5 @@ before_script:
 install:
   - cpanm --quiet Net::Telnet
 script:
-  - ./test.t
+  - perl -Mlocal::lib ./test.t
   

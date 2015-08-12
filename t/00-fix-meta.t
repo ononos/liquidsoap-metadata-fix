@@ -9,7 +9,7 @@ use Data::Dumper;
 
 BEGIN { use_ok('Encode::Guess'); }
 
-use constant LIQUIDSOAP => 'liquidsoap ./test.liq';
+use constant LIQUIDSOAP => 'liquidsoap ./t/test.liq';
 
 # spawn liquidsoap
 my ( $pid, $liquidsoap_fh );
